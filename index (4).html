@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>VistaEarn</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.js"></script>
+<style>
+:root{--br:#3b1608;--br2:#5a2410;--cr:#fff3dc;--go:#f5b81c;--go2:#d9970a}
+*{box-sizing:border-box;margin:0;font-family:system-ui,sans-serif}
+body{background:radial-gradient(circle at 85% 0,#7a3a1c 0,transparent 45%),linear-gradient(#4a1c0a,#2a0d04);min-height:100vh;color:#fff;padding-bottom:120px}
+.w{max-width:480px;margin:auto;padding:12px}
+.topbar{background:linear-gradient(#fff3dc,#f3dcaa);border-radius:0 0 32px 32px;margin:-12px -12px 14px;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 4px 12px rgba(0,0,0,.4)}
+.logo{font-size:30px;font-weight:900;font-style:italic;color:var(--go2)}.logo span{color:var(--br)}
+.tag{font-size:12px;color:var(--br);font-weight:700;text-align:right}
+.hero{background:linear-gradient(135deg,var(--br2),var(--br));border:1px solid #7a3a1c;border-radius:24px;padding:16px;margin-bottom:12px}
+.hero h1{font-size:28px}.hero h1 b{color:var(--go)}.hero p{margin-top:6px;opacity:.9}
+.card{background:linear-gradient(#fffaf0,#f5e1b8);color:var(--br);border-radius:28px;padding:16px;margin-bottom:12px;box-shadow:0 4px 14px rgba(0,0,0,.4)}
+.wal{display:flex;justify-content:space-between;align-items:center;gap:6px}
+.wal small{font-size:16px;font-weight:700}.bal{font-size:42px;font-weight:900;line-height:1.1}
+.wi{font-size:52px;line-height:1}.coins{font-size:60px;line-height:1;text-align:center}
+.bar{height:14px;background:#ecd7a8;border-radius:9px;overflow:hidden;margin:10px 0 6px}.bar i{display:block;height:100%;background:var(--br);border-radius:9px;min-width:6%}
+.btn{background:linear-gradient(#ffd45a,var(--go));color:var(--br);border:0;border-radius:30px;padding:13px 18px;font-weight:800;font-size:16px;cursor:pointer;width:100%}
+.btn.d{background:linear-gradient(#5a2410,#3b1608);color:#fff;border:2px solid var(--go2)}
+.btn.s{width:auto;padding:8px 18px;font-size:14px}.btn:disabled{opacity:.55}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.g3 .card{text-align:center;padding:12px 4px;margin:0;border-radius:24px}.g3 b{font-size:20px;display:block}.g3 .ic{font-size:34px;display:block}.g3 span{font-size:14px}
+.sec{display:flex;justify-content:space-between;align-items:center;margin:16px 0 10px;gap:8px}
+.sec h3{background:linear-gradient(90deg,#3b1608,#5a2410);border:1px solid #7a3a1c;border-radius:30px;padding:10px 20px 10px 12px;font-size:21px;display:flex;align-items:center;gap:10px;margin:0}
+.sec h3 i{width:10px;height:26px;background:var(--go);border-radius:6px;display:block}
+.t{display:flex;align-items:center;gap:12px;background:linear-gradient(#fffaf0,#f5e1b8);color:var(--br);border-radius:28px;padding:12px 14px;margin-bottom:10px;box-shadow:0 3px 10px rgba(0,0,0,.4)}
+.tic{width:58px;height:58px;border-radius:50%;background:radial-gradient(#7a3a1c,#3b1608);border:2px solid var(--go);display:flex;align-items:center;justify-content:center;font-size:27px;flex:none}
+.t .m{flex:1;min-width:0}.t b{font-size:17px;display:block}.t small{display:block;font-size:13px;margin-top:2px}
+.rw{text-align:right;font-weight:900;font-size:20px;flex:none}.rw .btn{margin-top:4px}
+input,select{width:100%;padding:13px;border-radius:14px;border:1px solid #cfae7a;margin:5px 0;font-size:15px;background:#fff}
+h3.ttl{margin:0 0 8px;font-size:20px}
+.nav{position:fixed;bottom:10px;left:50%;transform:translateX(-50%);width:calc(100% - 20px);max-width:460px;background:linear-gradient(#5a2410,#3b1608);border:3px solid var(--go2);border-radius:36px;display:flex;justify-content:space-around;align-items:center;padding:8px 4px;z-index:5}
+.nav a{color:#fff;text-align:center;font-size:12px;padding:4px 6px;cursor:pointer;flex:1}.nav a.on{color:var(--go);font-weight:800}.nav a span{display:block;font-size:22px}
+.nav .gift{flex:none;width:74px;height:74px;border-radius:50%;background:radial-gradient(#ffd45a,var(--go2));border:4px solid var(--go2);margin-top:-36px;font-size:34px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 0 0 3px #3b1608}
+table{width:100%;font-size:13px;border-collapse:collapse}td,th{padding:6px 3px;border-bottom:1px solid #e3cfa5;text-align:left}
+.tabs{display:flex;gap:6px;margin-bottom:10px}.tabs button{flex:1}
+#toast{position:fixed;top:14px;left:50%;transform:translateX(-50%);background:var(--go);color:var(--br);padding:10px 18px;border-radius:20px;font-weight:700;display:none;z-index:9}
+</style></head><body>
+<div id="toast"></div><div class="w" id="app"><p style="text-align:center;margin-top:40vh;color:#f5b81c;font-size:20px">Loading VistaEarn...</p></div>
+<script>
+// ===== CONFIG: paste from Supabase > Project Settings > API =====
+const SB_URL="https://dugcoxabchdbtdsufbwm.supabase.co", SB_KEY="sb_publishable_SU6sY8o6u0JwERCBGiIO_g_mE6hSW_0";
+const SUPPORT="https://t.me/allverifird", MIN_WD=30000;
+// ================================================================
+let sb;
+let me,tasks=[],log={},wds=[],view='home',mode='login',adm='users',users=[],allW=[],pend={};
+const $=s=>document.querySelector(s),N=n=>'₦'+Number(n||0).toLocaleString();
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function toast(m){const t=$('#toast');t.textContent=m;t.style.display='block';setTimeout(()=>t.style.display='none',2800)}
+async function run(p,ok){const{error}=await p;if(error)toast(error.message);else{if(ok)toast(ok);await load()}}
+
+async function boot(){
+  const{data:{session}}=await sb.auth.getSession();
+  if(!session)return authView();
+  await load();
+}
+function authView(){
+  const ref=new URLSearchParams(location.search).get('ref')||'';
+  if(ref)mode='reg';
+  $('#app').innerHTML=`<div class="top"><div class="logo">Vista<span>Earn</span></div></div>
+  <div class="hero"><h1>Vista<b>Earn</b></h1><p>Read News • Complete Tasks • Earn</p></div>
+  <div class="card"><h3 style="margin:0">${mode=='reg'?'Create account — get ₦1,000 bonus':'Welcome back'}</h3>
+  ${mode=='reg'?'<input id="nm" placeholder="Full name">':''}
+  <input id="em" type="email" placeholder="Email"><input id="pw" type="password" placeholder="Password (min 6)">
+  ${mode=='reg'?`<input id="rf" placeholder="Referral code (optional)" value="${esc(ref)}">`:''}
+  <button class="btn" id="go">${mode=='reg'?'Register':'Login'}</button>
+  <p style="text-align:center;margin-top:10px"><a href="#" id="sw" style="color:var(--br)">${mode=='reg'?'Have an account? Login':'New here? Register'}</a></p></div>`;
+  $('#sw').onclick=e=>{e.preventDefault();mode=mode=='reg'?'login':'reg';authView()};
+  $('#go').onclick=async()=>{
+    const email=$('#em').value.trim(),password=$('#pw').value;
+    const r=mode=='reg'?await sb.auth.signUp({email,password,options:{data:{name:$('#nm').value.trim(),ref:$('#rf').value.trim()}}}):await sb.auth.signInWithPassword({email,password});
+    if(r.error)return toast(r.error.message);
+    if(!r.data.session)return toast('Check your email to confirm, then login');
+    history.replaceState(null,'',location.pathname);await load();
+  };
+}
+async function load(){
+  const{data:{user}}=await sb.auth.getUser();
+  const[p,t,l,w]=await Promise.all([sb.from('profiles').select('*').eq('id',user.id).single(),sb.from('tasks').select('*').eq('active',true).order('sort'),sb.from('task_log').select('*'),sb.from('withdrawals').select('*').eq('user_id',user.id).order('id',{ascending:false})]);
+  me=p.data;tasks=t.data||[];log={};(l.data||[]).forEach(x=>log[x.task_id]=x);wds=w.data||[];
+  if(me.is_admin&&view=='admin'){users=(await sb.from('profiles').select('*').order('created_at',{ascending:false})).data||[];allW=(await sb.from('withdrawals').select('*').order('id',{ascending:false})).data||[]}
+  draw();
+}
+const done=()=>tasks.filter(t=>log[t.id]?.done).length;
+const ICON=t=>/telegram/i.test(t.title)?'✈️':/facebook/i.test(t.title)?'👍':'📰';
+function taskRow(t){
+  const l=log[t.id],d=l?.done;
+  let btn=d?'<button class="btn d s" disabled>Done ✓</button>':l?`<button class="btn s" data-c="${t.id}">I completed</button>`:`<button class="btn d s" data-o="${t.id}">Open</button>`;
+  return `<div class="t"><div class="tic">${ICON(t)}</div><div class="m"><b>${esc(t.title)}</b><small>${esc(t.descr)}</small><small>⏱ ${t.seconds} Sec • ${d?'Completed':l?'Come back and tap I completed':'Task'}</small></div><div class="rw">+${N(t.reward)}<br>${btn}</div></div>`;
+}
+function walletCard(){
+  const pct=Math.min(100,me.balance/MIN_WD*100);
+  return `<div class="card"><div class="wal"><div class="wi">👛</div><div style="flex:1"><small>Wallet Balance</small><div class="bal">${N(me.balance)}</div></div><div class="coins">🪙</div></div>
+  <div class="bar"><i style="width:${pct}%"></i></div><small style="font-weight:700">${N(me.balance)} of ${N(MIN_WD)} minimum withdrawal</small>
+  ${view=='home'?'<br><br><button class="btn d" data-v="wallet">👛 Withdraw</button>':''}</div>`;
+}
+function stats(){return `<div class="g3"><div class="card"><span class="ic">🏆</span><b>${N(me.earned)}</b><span>Earned</span></div><div class="card"><span class="ic">✅</span><b>${done()}/${tasks.length}</b><span>Tasks done</span></div><div class="card"><span class="ic">👥</span><b>${me.referrals}</b><span>Referrals</span></div></div>`}
+const inviteRow=()=>`<div class="t"><div class="tic">👥</div><div class="m"><b>Invite Friends</b><small>Invite your friends and earn more</small></div><div class="rw">+${N(500)}<br><button class="btn d s" data-v="profile">Invite</button></div></div>`;
+function draw(){
+  let h=`<div class="topbar"><div class="logo">Vista<span>Earn</span></div><div class="tag">Read. Task. Earn.<br>Live Better</div></div>`;
+  if(view=='home')h+=`<div class="hero"><h1>Vista<b>Earn</b> is coming to you!</h1><p>Read News • Complete Tasks<br>Earn Real Money</p></div>${walletCard()}${stats()}
+  <div class="sec"><h3><i></i>Available Tasks</h3><button class="btn s" data-v="tasks">View All →</button></div>${tasks.map(taskRow).join('')}${inviteRow()}`;
+  if(view=='tasks')h+=`${stats()}<div class="sec"><h3><i></i>All Tasks</h3></div>${tasks.map(taskRow).join('')}${inviteRow()}`;
+  if(view=='wallet')h+=`${walletCard()}<div class="card"><h3 class="ttl">Withdraw money</h3><small>Minimum withdrawal ${N(MIN_WD)}</small>
+  <input id="wa" type="number" placeholder="Amount"><input id="wb" placeholder="Bank name"><input id="wn" placeholder="Account number"><input id="wm" placeholder="Account name">
+  <br><br><button class="btn d" id="wd">👛 Request Withdrawal</button></div>
+  <div class="sec"><h3><i></i>History</h3></div><div class="card"><table>${wds.map(x=>`<tr><td>${N(x.amount)}</td><td>${esc(x.bank)}</td><td>${x.status}</td></tr>`).join('')||'<tr><td>No withdrawals yet</td></tr>'}</table></div>`;
+  if(view=='profile'){const link=location.origin+location.pathname+'?ref='+me.ref_code;
+  h+=`${stats()}<div class="card"><div style="display:flex;align-items:center;gap:12px"><div class="tic">👤</div><div><b style="font-size:18px">${esc(me.name)}</b><br><small>${esc(me.email)}</small></div></div></div>
+  <div class="card"><h3 class="ttl">Your referral link</h3><input readonly value="${link}" id="rl"><br><br><button class="btn d" id="cp">Copy link</button><p style="margin-top:8px"><small>Earn ${N(500)} immediately when someone registers with your link.</small></p></div>
+  <a href="${SUPPORT}" target="_blank" class="btn d" style="display:block;text-align:center;text-decoration:none;margin-bottom:12px">✈️ Contact Support (latest task updates)</a>
+  ${me.is_admin?'<button class="btn" data-v="admin">Admin Dashboard</button><br><br>':''}<button class="btn d" id="lo">Logout</button>`}
+  if(view=='admin')h+=adminHTML();
+  const nv=(v,i,n)=>`<a data-v="${v}" class="${view==v?'on':''}"><span>${i}</span>${n}</a>`;
+  h+=`<div class="nav">${nv('home','🏠','Home')}${nv('tasks','☑️','Tasks')}<div class="gift" data-v="profile">🎁</div>${nv('wallet','👛','Wallet')}${nv('profile','👤','Profile')}</div>`;
+  $('#app').innerHTML=h;wire();
+}
+function adminHTML(){
+  let h=`<div class="tabs">${['users','tasks','withdrawals'].map(x=>`<button class="btn ${adm==x?'':'d'} s" data-a="${x}">${x}</button>`).join('')}</div><div class="card">`;
+  if(adm=='users')h+=`<input id="us" placeholder="Search email/name"><table id="ut">${users.map(u=>`<tr data-s="${esc((u.email+u.name).toLowerCase())}"><td>${esc(u.name)}<br><small>${esc(u.email)}</small></td><td>${N(u.balance)}</td><td><button class="btn s" data-cr="${u.id}">±₦</button></td></tr>`).join('')}</table>`;
+  if(adm=='tasks')h+=`<b>Add task</b><input id="at" placeholder="Title"><input id="ad" placeholder="Description"><input id="al" placeholder="Link"><input id="ar" type="number" placeholder="Reward" value="500"><input id="as" type="number" placeholder="Seconds" value="20"><button class="btn" id="addt">Add task</button><hr style="margin:12px 0">
+  <table>${tasks.map(t=>`<tr><td>${esc(t.title)}<br><small>${N(t.reward)}</small></td><td><button class="btn s d" data-del="${t.id}">Remove</button></td></tr>`).join('')}</table>`;
+  if(adm=='withdrawals')h+=`<table>${allW.map(x=>{const u=users.find(u=>u.id==x.user_id)||{};return `<tr><td>${esc(u.email)}<br><small>${esc(x.bank)} ${esc(x.acct_no)}<br>${esc(x.acct_name)}</small></td><td>${N(x.amount)}<br>${x.status}</td><td>${x.status=='pending'?`<button class="btn s" data-ap="${x.id}">✓</button> <button class="btn s d" data-rj="${x.id}">✗</button>`:''}</td></tr>`}).join('')||'<tr><td>None</td></tr>'}</table>`;
+  return h+'</div>';
+}
+function wire(){
+  document.querySelectorAll('[data-v]').forEach(e=>e.onclick=async()=>{view=e.dataset.v;await load()});
+  document.querySelectorAll('[data-o]').forEach(e=>e.onclick=async()=>{
+    const t=tasks.find(x=>x.id==e.dataset.o);window.open(t.link,'_blank');
+    await run(sb.rpc('start_task',{t:t.id}),`Spend ${t.seconds}s on the task, then come back`)});
+  document.querySelectorAll('[data-c]').forEach(e=>e.onclick=()=>run(sb.rpc('complete_task',{t:+e.dataset.c}),'Reward added!'));
+  const g=id=>document.getElementById(id);
+  if(g('wd'))g('wd').onclick=()=>run(sb.rpc('withdraw',{a:+g('wa').value,b:g('wb').value,n:g('wn').value,nm:g('wm').value}),'Withdrawal requested');
+  if(g('cp'))g('cp').onclick=()=>{navigator.clipboard.writeText(g('rl').value);toast('Copied')};
+  if(g('lo'))g('lo').onclick=async()=>{await sb.auth.signOut();location.reload()};
+  document.querySelectorAll('[data-a]').forEach(e=>e.onclick=async()=>{adm=e.dataset.a;await load()});
+  if(g('us'))g('us').oninput=e=>document.querySelectorAll('#ut tr').forEach(r=>r.style.display=r.dataset.s.includes(e.target.value.toLowerCase())?'':'none');
+  document.querySelectorAll('[data-cr]').forEach(e=>e.onclick=()=>{const a=prompt('Amount to add (negative to deduct):');if(a)run(sb.rpc('admin_credit',{u:e.dataset.cr,a:+a}),'Balance updated')});
+  if(g('addt'))g('addt').onclick=()=>run(sb.from('tasks').insert({title:g('at').value,descr:g('ad').value,link:g('al').value,reward:+g('ar').value,seconds:+g('as').value,sort:tasks.length+1}),'Task added');
+  document.querySelectorAll('[data-del]').forEach(e=>e.onclick=()=>confirm('Remove task?')&&run(sb.from('tasks').update({active:false}).eq('id',e.dataset.del),'Removed'));
+  document.querySelectorAll('[data-ap]').forEach(e=>e.onclick=()=>run(sb.rpc('admin_withdrawal',{w:+e.dataset.ap,ok:true}),'Approved'));
+  document.querySelectorAll('[data-rj]').forEach(e=>e.onclick=()=>run(sb.rpc('admin_withdrawal',{w:+e.dataset.rj,ok:false}),'Rejected & refunded'));
+}
+function lib(u){return new Promise(r=>{const e=document.createElement('script');e.src=u;e.onload=()=>r(true);e.onerror=()=>r(false);document.head.appendChild(e)})}
+(async()=>{
+  try{
+    if(!window.supabase){
+      for(const u of ['https://unpkg.com/@supabase/supabase-js@2.57.4/dist/umd/supabase.js','https://cdnjs.cloudflare.com/ajax/libs/supabase-js/2.57.4/supabase.min.js']){ if(await lib(u)&&window.supabase)break; }
+    }
+    if(!window.supabase)throw new Error('Could not load. Check your internet and refresh.');
+    sb=supabase.createClient(SB_URL,SB_KEY);
+    await boot();
+  }catch(e){
+    $('#app').innerHTML='<div class="card" style="margin-top:30px"><b>Something went wrong</b><p style="margin:8px 0">'+esc(e.message||e)+'</p><button class="btn" onclick="location.reload()">Try again</button></div>';
+  }
+})();
+</script></body></html>
